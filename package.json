@@ -1,0 +1,19 @@
+{
+  "name": "canvas-tournament-bracket",
+  "version": "1.0.0",
+  "description": "A standalone, modular tournament bracket renderer for HTML5 Canvas.",
+  "main": "assets/js/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "static-server"
+  },
+  "keywords": [
+    "canvas",
+    "tournament",
+    "bracket",
+    "modular",
+    "javascript"
+  ],
+  "author": "",
+  "license": "MIT"
+}
