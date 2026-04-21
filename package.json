@@ -1,5 +1,5 @@
 {
-  "name": "TournamentVisualizer",
+  "name": "tournament-visualizer",
   "version": "1.0.0",
   "description": "A standalone, modular tournament bracket renderer for HTML5 Canvas.",
   "main": "assets/js/index.js",
