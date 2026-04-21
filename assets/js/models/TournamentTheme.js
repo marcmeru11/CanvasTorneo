@@ -19,6 +19,10 @@ class TournamentTheme {
     this.teamYsize = options.teamYsize ?? 50;
     this.minWidth = options.minWidth ?? 100;
     this.paddingX = options.paddingX ?? 24;
+    // Score
+    this.scoreBoxFillColor = options.scoreBoxFillColor || "#1e293b";
+    this.scoreTextColor = options.scoreTextColor || "#ffffff";
+    this.scoreBoxWidth = options.scoreBoxWidth ?? 30;
   }
 
   /**

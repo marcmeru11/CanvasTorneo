@@ -17,8 +17,18 @@ try {
   const bracket = new TournamentBracket("canvas", customTheme);
   
   const demoData = [
-    ["Equipo A", "Team with an Extremely Long Name That Should Cause Boxes to Grow", "Equipo C", "Equipo D", "E"],
-    ["Equipo A", "Equipo C", "E"],
+    [
+      { name: "Equipo A", score: 3 }, 
+      { name: "Team with an Extremely Long Name That Should Cause Boxes to Grow", score: 2 }, 
+      { name: "Equipo C", score: 1 }, 
+      "Equipo D", 
+      "E"
+    ],
+    [
+      { name: "Equipo A", score: 2 }, 
+      { name: "Equipo C", score: 0 }, 
+      "E"
+    ],
     ["Equipo A", "E"],
     ["Equipo A"]
   ];
