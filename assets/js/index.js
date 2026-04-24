@@ -25,11 +25,13 @@ class TournamentBracket {
    * @param {TournamentTheme|Object} themeOrOptions - A theme instance or configuration object.
    */
   constructor(canvasElement, themeOrOptions = {}) {
+    console.log("TournamentBracket: Initializing...", canvasElement);
     this.#canvas = typeof canvasElement === "string" 
       ? document.getElementById(canvasElement) 
       : canvasElement;
 
     if (!this.#canvas) {
+      console.error("TournamentBracket: Canvas element not found!");
       throw new Error("TournamentBracket: Valid canvas element or ID required.");
     }
 
@@ -49,7 +51,7 @@ class TournamentBracket {
       this.#onInputUpdate.bind(this)
     );
 
-    this.resize();
+    this.resize(this.#canvas.clientWidth, this.#canvas.clientHeight);
   }
 
   /**
@@ -57,6 +59,7 @@ class TournamentBracket {
    * @param {Array<Array<string>>} rounds - The tournament rounds and teams.
    */
   setData(rounds) {
+    console.log("TournamentBracket: Setting data...", rounds);
     this.#tournament.clear();
     for (const teams of rounds) {
       this.#tournament.addRound(teams);
@@ -68,6 +71,7 @@ class TournamentBracket {
    * Triggers a manual re-render of the current scene.
    */
   render() {
+    console.log("TournamentBracket: Rendering...", this.#sceneShapes.length, "shapes");
     this.#renderer.begin();
     for (const shape of this.#sceneShapes) {
       shape.draw(this.#renderer.ctx, this.#camera);
@@ -75,16 +79,20 @@ class TournamentBracket {
   }
 
   /**
-   * Resizes the canvas to match its container or window.
+   * Resizes the canvas to match specified dimensions, its container, or window.
+   * @param {number} [width] - Optional width.
+   * @param {number} [height] - Optional height.
    */
-  resize() {
-    this.#renderer.resize(window.innerWidth, window.innerHeight);
+  resize(width, height) {
+    const w = width ?? window.innerWidth;
+    const h = height ?? window.innerHeight;
+    this.#renderer.resize(w, h);
     this.render();
   }
 
   #onInputUpdate(event) {
     if (event && event.type === "resize") {
-      this.resize();
+      this.resize(this.#canvas.clientWidth, this.#canvas.clientHeight);
     } else {
       this.render();
     }
@@ -92,7 +100,43 @@ class TournamentBracket {
 
   #updateScene() {
     this.#sceneShapes = this.#layout.generateShapes(this.#tournament, this.#renderer.ctx);
+    console.log("TournamentBracket: Scene updated with", this.#sceneShapes.length, "shapes");
+    this.centerCamera();
     this.render();
+  }
+
+  /**
+   * Centers the camera on the current bracket.
+   */
+  centerCamera() {
+    if (this.#sceneShapes.length === 0) return;
+
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const shape of this.#sceneShapes) {
+      if (shape.x !== undefined) {
+        minX = Math.min(minX, shape.x);
+        minY = Math.min(minY, shape.y);
+        maxX = Math.max(maxX, shape.x + (shape.width || 0));
+        maxY = Math.max(maxY, shape.y + (shape.height || 0));
+      }
+    }
+
+    const bracketWidth = maxX - minX;
+    const bracketHeight = maxY - minY;
+    
+    const canvasWidth = this.#canvas.width;
+    const canvasHeight = this.#canvas.height;
+
+    // Center the bracket in the canvas
+    this.#camera.x = (canvasWidth - bracketWidth) / 2 - minX;
+    this.#camera.y = (canvasHeight - bracketHeight) / 2 - minY;
+    this.#camera.zoom = Math.min(
+        (canvasWidth * 0.8) / bracketWidth,
+        (canvasHeight * 0.8) / bracketHeight,
+        1
+    );
+    
+    console.log("TournamentBracket: Camera centered at", this.#camera.x, this.#camera.y, "zoom", this.#camera.zoom);
   }
 }
 

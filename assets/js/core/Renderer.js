@@ -28,7 +28,7 @@ class Renderer {
    */
   clear() {
     this.#camera.reset(this.#ctx);
-    if (this.#backgroundColor) {
+    if (this.#backgroundColor && this.#backgroundColor !== "transparent") {
       this.#ctx.fillStyle = this.#backgroundColor;
       this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height);
     } else {
