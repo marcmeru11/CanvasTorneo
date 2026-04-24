@@ -85,13 +85,14 @@ class TournamentBracket {
     const width = this.#canvas.clientWidth;
     const height = this.#canvas.clientHeight;
 
-  this.#renderer.resize(width, height);
-  this.render();
+    this.#renderer.resize(width, height);
+    this.centerCamera();
+    this.render();
   }
 
   #onInputUpdate(event) {
     if (event && event.type === "resize") {
-      this.resize(this.#canvas.clientWidth, this.#canvas.clientHeight);
+      this.resize();
     } else {
       this.render();
     }
@@ -126,16 +127,19 @@ class TournamentBracket {
     const canvasWidth = this.#canvas.width;
     const canvasHeight = this.#canvas.height;
 
-    // Center the bracket in the canvas
-    this.#camera.x = (canvasWidth - bracketWidth) / 2 - minX;
-    this.#camera.y = (canvasHeight - bracketHeight) / 2 - minY;
+    // Calculate optimal zoom to fit the bracket with a margin
+    const padding = 0.8; // 80% of the screen
     this.#camera.zoom = Math.min(
-        (canvasWidth * 0.8) / bracketWidth,
-        (canvasHeight * 0.8) / bracketHeight,
-        1
+        (canvasWidth * padding) / bracketWidth,
+        (canvasHeight * padding) / bracketHeight,
+        1 // Don't zoom in more than 100%
     );
+
+    // Center the bracket in the canvas, accounting for current zoom
+    this.#camera.x = (canvasWidth - bracketWidth * this.#camera.zoom) / 2 - minX * this.#camera.zoom;
+    this.#camera.y = (canvasHeight - bracketHeight * this.#camera.zoom) / 2 - minY * this.#camera.zoom;
     
-    console.log("TournamentBracket: Camera centered at", this.#camera.x, this.#camera.y, "zoom", this.#camera.zoom);
+    console.log("TournamentBracket: Camera adapted to fit", bracketWidth, "x", bracketHeight, "at zoom", this.#camera.zoom);
   }
 }
 

@@ -11,7 +11,7 @@ try {
   const customTheme = TournamentTheme.DARK.extend({
     boxBorderRadius: 15,
     roundSpacingX: 120,
-    layoutType: "split",
+    //layoutType: "split",
     centerGap: 250
   });
 
