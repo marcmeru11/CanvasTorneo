@@ -6,14 +6,19 @@ class InputManager {
   #canvas;
   #camera;
   #onUpdate;
+  #onInput; // Callback for generic input events (click, hover)
   #dragging = false;
   #lastMouseX = 0;
   #lastMouseY = 0;
+  #mouseDownX = 0;
+  #mouseDownY = 0;
+  #clickThreshold = 5; // Pixels allowed to move to still count as a click
 
-  constructor(canvas, camera, onUpdate) {
+  constructor(canvas, camera, onUpdate, onInput) {
     this.#canvas = canvas;
     this.#camera = camera;
     this.#onUpdate = onUpdate;
+    this.#onInput = onInput;
 
     this.#initEvents();
   }
@@ -30,10 +35,23 @@ class InputManager {
     this.#dragging = true;
     this.#lastMouseX = event.clientX;
     this.#lastMouseY = event.clientY;
+    this.#mouseDownX = event.clientX;
+    this.#mouseDownY = event.clientY;
     this.#canvas.classList.add("dragging");
   }
 
   #onMouseMove(event) {
+    const rect = this.#canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Report mouse move for hover effects
+    if (this.#onInput) {
+      const worldX = (mouseX - this.#camera.x) / this.#camera.zoom;
+      const worldY = (mouseY - this.#camera.y) / this.#camera.zoom;
+      this.#onInput({ type: "hover", x: worldX, y: worldY });
+    }
+
     if (!this.#dragging) return;
 
     const dx = event.clientX - this.#lastMouseX;
@@ -48,7 +66,27 @@ class InputManager {
     if (this.#onUpdate) this.#onUpdate();
   }
 
-  #onMouseUp() {
+  #onMouseUp(event) {
+    if (this.#dragging) {
+      const dist = Math.sqrt(
+        Math.pow(event.clientX - this.#mouseDownX, 2) + 
+        Math.pow(event.clientY - this.#mouseDownY, 2)
+      );
+
+      if (dist < this.#clickThreshold) {
+        const rect = this.#canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        
+        const worldX = (mouseX - this.#camera.x) / this.#camera.zoom;
+        const worldY = (mouseY - this.#camera.y) / this.#camera.zoom;
+
+        if (this.#onInput) {
+          this.#onInput({ type: "click", x: worldX, y: worldY });
+        }
+      }
+    }
+
     this.#dragging = false;
     this.#canvas.classList.remove("dragging");
   }

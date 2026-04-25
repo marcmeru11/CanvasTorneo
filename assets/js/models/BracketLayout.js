@@ -84,6 +84,8 @@ class BracketLayout {
         const teamData = teams[t];
         const teamName = typeof teamData === "string" ? teamData : teamData.name;
         const score = teamData.score !== undefined ? teamData.score : null;
+        const url = teamData.url || null;
+        const matchUrl = teamData.matchUrl || null;
         
         const x = getX(r, t, itemsInRound);
         const y = getTeamY(r, t, itemsInRound);
@@ -95,10 +97,15 @@ class BracketLayout {
         const isRightSide = isSplit && r < roundCount - 1 && t >= itemsInRound / 2;
 
         // Add Main Box
-        shapes.push(new RectShape(
+        const mainBox = new RectShape(
           x, y, width, teamYsize, this.#theme.boxFillColor, true, 
           this.#theme.boxStrokeColor, this.#theme.boxLineWidth, this.#theme.boxBorderRadius
-        ));
+        );
+        if (url) {
+          mainBox.metadata = { url };
+          mainBox.cursor = "pointer";
+        }
+        shapes.push(mainBox);
 
         // Add Score Box (Symmetric)
         if (hasScore) {
@@ -107,10 +114,15 @@ class BracketLayout {
             ? [this.#theme.boxBorderRadius, 0, 0, this.#theme.boxBorderRadius]
             : [0, this.#theme.boxBorderRadius, this.#theme.boxBorderRadius, 0];
 
-          shapes.push(new RectShape(
+          const scoreBox = new RectShape(
             scoreX, y, scoreWidth, teamYsize, this.#theme.scoreBoxFillColor, true,
             this.#theme.boxStrokeColor, this.#theme.boxLineWidth, borderRadius
-          ));
+          );
+          if (url) {
+            scoreBox.metadata = { url };
+            scoreBox.cursor = "pointer";
+          }
+          shapes.push(scoreBox);
 
           shapes.push(new TextShape(
             scoreX + scoreWidth / 2, y + teamYsize / 2, score.toString(),
@@ -125,7 +137,7 @@ class BracketLayout {
           this.#theme.textColor, this.#theme.fontFamily, this.#theme.fontSize
         ));
 
-        // Add Progress Connectors
+        // Add Progress Connectors and Match Link
         if (r < roundCount - 1) {
           const isLastSplitRound = isSplit && r === roundCount - 2;
           const nextMetric = roundMetrics[r + 1];
@@ -146,9 +158,31 @@ class BracketLayout {
           shapes.push(new LineShape(xStart, y + teamYsize/2, xMid, y + teamYsize/2, this.#theme.lineColor, this.#theme.lineWidth));
           shapes.push(new LineShape(xMid, y + teamYsize/2, xMid, nextY, this.#theme.lineColor, this.#theme.lineWidth));
           shapes.push(new LineShape(xMid, nextY, xEnd, nextY, this.#theme.lineColor, this.#theme.lineWidth));
+
+          // Add Match Link Indicator (only for the first team of the pair to avoid duplicates)
+          if (t % 2 === 0 && matchUrl) {
+            const indicatorSize = 20;
+            const indicatorX = xMid - indicatorSize / 2;
+            const indicatorY = (y + teamYsize / 2 + nextY) / 2 - indicatorSize / 2;
+            
+            const matchIndicator = new RectShape(
+              indicatorX, indicatorY, indicatorSize, indicatorSize, 
+              this.#theme.boxStrokeColor, true, this.#theme.boxStrokeColor, 1, indicatorSize / 2
+            );
+            matchIndicator.metadata = { url: matchUrl };
+            matchIndicator.cursor = "pointer";
+            shapes.push(matchIndicator);
+
+            // Add a small "L" or icon text
+            shapes.push(new TextShape(
+              indicatorX + indicatorSize / 2, indicatorY + indicatorSize / 2, "i",
+              this.#theme.boxFillColor, this.#theme.fontFamily, 12
+            ));
+          }
         }
       }
     }
+
 
     return shapes;
   }

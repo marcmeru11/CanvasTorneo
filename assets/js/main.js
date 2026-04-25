@@ -20,22 +20,30 @@ try {
   
   const demoData = [
     [
-      { name: "Team 1", score: 2 }, { name: "Team 2", score: 1 },
-      { name: "Team 3", score: 0 }, { name: "Team 4", score: 3 },
-      { name: "Team 5", score: 1 }, { name: "Team 6", score: 2 },
-      { name: "Team 7", score: 3 }, { name: "Team 8", score: 0 }
+      { name: "Team 1", score: 2, url: "https://example.com/team1", matchUrl: "https://example.com/match1" }, 
+      { name: "Team 2", score: 1, url: "https://example.com/team2" },
+      { name: "Team 3", score: 0, url: "https://example.com/team3", matchUrl: "https://example.com/match2" }, 
+      { name: "Team 4", score: 3, url: "https://example.com/team4" },
+      { name: "Team 5", score: 1, url: "https://example.com/team5", matchUrl: "https://example.com/match3" }, 
+      { name: "Team 6", score: 2, url: "https://example.com/team6" },
+      { name: "Team 7", score: 3, url: "https://example.com/team7", matchUrl: "https://example.com/match4" }, 
+      { name: "Team 8", score: 0, url: "https://example.com/team8" }
     ],
     [
-      { name: "Team 1", score: 3 }, { name: "Team 4", score: 2 },
-      { name: "Team 6", score: 1 }, { name: "Team 7", score: 4 }
+      { name: "Team 1", score: 3, url: "https://example.com/team1", matchUrl: "https://example.com/match5" }, 
+      { name: "Team 4", score: 2, url: "https://example.com/team4" },
+      { name: "Team 6", score: 1, url: "https://example.com/team6", matchUrl: "https://example.com/match6" }, 
+      { name: "Team 7", score: 4, url: "https://example.com/team7" }
     ],
     [
-      { name: "Team 1", score: 5 }, { name: "Team 7", score: 2 }
+      { name: "Team 1", score: 5, url: "https://example.com/team1", matchUrl: "https://example.com/match7" }, 
+      { name: "Team 7", score: 2, url: "https://example.com/team7" }
     ],
     [
-      { name: "Winner: Team 1" }
+      { name: "Winner: Team 1", url: "https://example.com/team1" }
     ]
   ];
+
 
   bracket.setData(demoData);
 

@@ -9,6 +9,8 @@ class RectShape {
     this.stroke = stroke;
     this.lineWidth = lineWidth;
     this.radius = radius;
+    this.metadata = null;
+    this.cursor = "default";
   }
 
   draw(ctx, camera) {
@@ -30,6 +32,13 @@ class RectShape {
     ctx.lineWidth = this.lineWidth / camera.zoom;
     ctx.stroke();
   }
+
+  /**
+   * Checks if a point (in world coordinates) is inside the rectangle.
+   */
+  isPointInside(px, py) {
+    return px >= this.x && px <= this.x + this.width &&
+           py >= this.y && py <= this.y + this.height;
+  }
 }
-export default RectShape;
-console.log("RectShape loaded");
+export default RectShape;

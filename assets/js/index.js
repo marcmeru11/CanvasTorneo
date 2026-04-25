@@ -49,7 +49,8 @@ class TournamentBracket {
     this.#input = new InputManager(
       this.#canvas, 
       this.#camera, 
-      this.#onInputUpdate.bind(this)
+      this.#onInputUpdate.bind(this),
+      this.#onInteraction.bind(this)
     );
     
     if (this.#theme.showCenterButton) {
@@ -61,7 +62,7 @@ class TournamentBracket {
 
   /**
    * Updates the tournament data and regenerates the layout.
-   * @param {Array<Array<string>>} rounds - The tournament rounds and teams.
+   * @param {Array<Array<string|Object>>} rounds - The tournament rounds and teams.
    */
   setData(rounds) {
     console.log("TournamentBracket: Setting data...", rounds);
@@ -76,7 +77,6 @@ class TournamentBracket {
    * Triggers a manual re-render of the current scene.
    */
   render() {
-    console.log("TournamentBracket: Rendering...", this.#sceneShapes.length, "shapes");
     this.#renderer.begin();
     for (const shape of this.#sceneShapes) {
       shape.draw(this.#renderer.ctx, this.#camera);
@@ -102,6 +102,33 @@ class TournamentBracket {
     } else {
       this.render();
     }
+  }
+
+  #onInteraction(event) {
+    const shape = this.#findShapeAt(event.x, event.y);
+    
+    if (event.type === "hover") {
+      if (shape && shape.cursor) {
+        this.#canvas.style.cursor = shape.cursor;
+      } else {
+        this.#canvas.style.cursor = "default";
+      }
+    } else if (event.type === "click") {
+      if (shape && shape.metadata && shape.metadata.url) {
+        console.log("TournamentBracket: Opening URL", shape.metadata.url);
+        window.open(shape.metadata.url, "_blank");
+      }
+    }
+  }
+
+  #findShapeAt(x, y) {
+    for (let i = this.#sceneShapes.length - 1; i >= 0; i--) {
+      const shape = this.#sceneShapes[i];
+      if (shape.isPointInside && shape.isPointInside(x, y)) {
+        return shape;
+      }
+    }
+    return null;
   }
 
   #updateScene() {
