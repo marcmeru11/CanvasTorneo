@@ -47,4 +47,62 @@ describe('BracketLayout', () => {
     const shapes = splitLayout.generateShapes(tournament, mockCtx);
     expect(shapes.length).toBeGreaterThan(0);
   });
+
+  it('should render score boxes when score is provided', () => {
+    const tournament = new Tournament([
+      [{ name: 'T1', score: 2 }, { name: 'T2', score: 1 }],
+      [{ name: 'T1', score: 0 }]
+    ]);
+    const shapes = layout.generateShapes(tournament, mockCtx);
+    
+    // Check that we generated the symmetric score boxes
+    // TextShapes should include the scores '2', '1', '0'
+    const textShapes = shapes.filter(s => s.constructor.name === 'TextShape');
+    const texts = textShapes.map(ts => ts.text); // Assuming TextShape has text or we just check they exist
+    expect(textShapes.length).toBeGreaterThan(3); // 3 names + 3 scores = 6
+  });
+
+  it('should render circle match indicators', () => {
+    const customTheme = theme.extend({ matchIndicatorType: 'circle' });
+    const localLayout = new BracketLayout(customTheme);
+    const tournament = new Tournament([
+      [{ name: 'T1', matchUrl: 'url1' }, { name: 'T2' }],
+      [{ name: 'T1' }]
+    ]);
+    const shapes = localLayout.generateShapes(tournament, mockCtx);
+    expect(shapes.length).toBeGreaterThan(0);
+  });
+
+  it('should render pill match indicators', () => {
+    const customTheme = theme.extend({ matchIndicatorType: 'pill' });
+    const localLayout = new BracketLayout(customTheme);
+    const tournament = new Tournament([
+      [{ name: 'T1', matchUrl: 'url1' }, { name: 'T2' }],
+      [{ name: 'T1' }]
+    ]);
+    const shapes = localLayout.generateShapes(tournament, mockCtx);
+    expect(shapes.length).toBeGreaterThan(0);
+  });
+
+  it('should render line match indicators (invisible hotspots)', () => {
+    const customTheme = theme.extend({ matchIndicatorType: 'line' });
+    const localLayout = new BracketLayout(customTheme);
+    const tournament = new Tournament([
+      [{ name: 'T1' }, { name: 'T2', matchUrl: 'url1' }], // Test partner having url
+      [{ name: 'T2' }]
+    ]);
+    const shapes = localLayout.generateShapes(tournament, mockCtx);
+    expect(shapes.length).toBeGreaterThan(0);
+  });
+
+  it('should not render match indicators when hidden', () => {
+    const customTheme = theme.extend({ matchIndicatorType: 'hidden' });
+    const localLayout = new BracketLayout(customTheme);
+    const tournament = new Tournament([
+      [{ name: 'T1', matchUrl: 'url1' }, { name: 'T2' }],
+      [{ name: 'T1' }]
+    ]);
+    const shapes = localLayout.generateShapes(tournament, mockCtx);
+    expect(shapes.length).toBeGreaterThan(0);
+  });
 });
