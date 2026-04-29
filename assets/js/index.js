@@ -1,6 +1,7 @@
 import Camera from "./core/Camera.js";
 import Renderer from "./core/Renderer.js";
 import InputManager from "./core/InputManager.js";
+import ImageLoader from "./core/ImageLoader.js";
 import Tournament from "./models/Tournament.js";
 import BracketLayout from "./models/BracketLayout.js";
 import TournamentTheme from "./models/TournamentTheme.js";
@@ -63,12 +64,31 @@ class TournamentBracket {
 
   /**
    * Updates the tournament data and regenerates the layout.
+   * Loads team logo images asynchronously — renders immediately, then
+   * re-renders once all images are available.
    * @param {Object|Array} data - Tournament data (new object format or legacy array).
+   * @returns {Promise<void>}
    */
-  setData(data) {
+  async setData(data) {
     console.log("TournamentBracket: Setting data...", data);
     this.#tournament = new Tournament(data);
+
+    // Collect image URLs from teams dictionary
+    const imageUrls = [];
+    if (data && data.teams) {
+      for (const team of Object.values(data.teams)) {
+        if (team.image) imageUrls.push(team.image);
+      }
+    }
+
+    // Render immediately (without logos on first pass)
     this.#updateScene();
+
+    // Preload images and re-render with logos
+    if (imageUrls.length > 0) {
+      await ImageLoader.loadAll(imageUrls);
+      this.#updateScene();
+    }
   }
 
   /**

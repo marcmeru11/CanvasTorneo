@@ -63,14 +63,14 @@ try {
   
   const tournamentData = {
     teams: {
-      "LIV": { name: "Liverpool", url: "https://example.com/liverpool" },
-      "GAL": { name: "Galatasaray", url: "https://example.com/galatasaray" },
-      "CHE": { name: "Chelsea", url: "https://example.com/chelsea" },
-      "PSG": { name: "Paris SG", url: "https://example.com/psg" },
-      "RMA": { name: "Real Madrid", url: "https://example.com/real-madrid" },
-      "FCB": { name: "FC Barcelona", url: "https://example.com/barcelona" },
-      "MCI": { name: "Man. City", url: "https://example.com/man-city" },
-      "BAY": { name: "Bayern M.", url: "https://example.com/bayern" }
+      "LIV": { name: "Liverpool", url: "https://example.com/liverpool", image: "./assets/logos/liverpool.png" },
+      "GAL": { name: "Galatasaray", url: "https://example.com/galatasaray", image: "./assets/logos/galatasaray.png" },
+      "CHE": { name: "Chelsea", url: "https://example.com/chelsea", image: "./assets/logos/chelsea.png" },
+      "PSG": { name: "Paris SG", url: "https://example.com/psg", image: "./assets/logos/psg.png" },
+      "RMA": { name: "Real Madrid", url: "https://example.com/real-madrid", image: "./assets/logos/real_madrid.png" },
+      "FCB": { name: "FC Barcelona", url: "https://example.com/barcelona", image: "./assets/logos/barcelona.png" },
+      "MCI": { name: "Man. City", url: "https://example.com/man-city", image: "./assets/logos/man_city.png" },
+      "BAY": { name: "Bayern M.", url: "https://example.com/bayern", image: "./assets/logos/bayern.png" }
     },
     championId: "RMA",
     rounds: [

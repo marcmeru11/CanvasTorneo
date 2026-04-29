@@ -4,8 +4,15 @@
   "description": "A standalone, modular tournament bracket renderer for HTML5 Canvas.",
   "main": "assets/js/index.js",
   "type": "module",
+  "files": [
+    "assets/js/index.js",
+    "assets/js/core/",
+    "assets/js/models/",
+    "assets/js/shapes/",
+    "README.md"
+  ],
   "scripts": {
-    "dev": "static-server",
+    "dev": "npx -y serve .",
     "test": "vitest run --coverage"
   },
   "keywords": [

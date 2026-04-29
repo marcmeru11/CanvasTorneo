@@ -59,6 +59,14 @@ class TournamentTheme {
     this.matchIndicatorColor = options.matchIndicatorColor || this.boxStrokeColor;
     this.matchIndicatorIconColor = options.matchIndicatorIconColor || "#ffffff";
     this.matchIndicatorLabel = options.matchIndicatorLabel || "i";
+
+    // Team Logos
+    this.showTeamLogos = options.showTeamLogos ?? true;
+    this.teamLogoSize = options.teamLogoSize ?? 28;
+    this.teamLogoShape = options.teamLogoShape || "circle"; // 'circle' or 'rect'
+    this.teamLogoBorderRadius = options.teamLogoBorderRadius ?? 4;
+    this.teamLogoMargin = options.teamLogoMargin ?? 8;
+    this.teamLogoPosition = options.teamLogoPosition || "left"; // 'left' or 'right'
   }
 
   /**

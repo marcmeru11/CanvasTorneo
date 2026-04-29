@@ -1,6 +1,8 @@
 import LineShape from "../shapes/line.js";
 import RectShape from "../shapes/rect.js";
 import TextShape from "../shapes/text.js";
+import ImageShape from "../shapes/image.js";
+import ImageLoader from "../core/ImageLoader.js";
 
 /**
  * BracketLayout.js
@@ -187,10 +189,53 @@ class BracketLayout {
             boxes.push(scoreText);
           }
 
-          // Add Team Name Text
+          // Add Team Logo and Name Text
           const nameX = isRightSide ? x + scoreWidth : x;
+          const teamImage = teamData.image ? ImageLoader.get(teamData.image) : null;
+          const showLogo = this.#theme.showTeamLogos && teamImage;
+          const logoSize = this.#theme.teamLogoSize;
+          const logoMargin = this.#theme.teamLogoMargin;
+          const logoSpace = showLogo ? (logoSize + logoMargin) : 0;
+
+          if (showLogo) {
+            const logoY = y + (teamYsize - logoSize) / 2;
+            let logoX;
+            if (this.#theme.teamLogoPosition === "right") {
+              logoX = nameX + effectiveNameWidth - logoMargin - logoSize;
+            } else {
+              logoX = nameX + logoMargin;
+            }
+
+            const logoShape = new ImageShape(
+              logoX, logoY, logoSize, logoSize, teamImage, {
+                clipShape: this.#theme.teamLogoShape,
+                borderRadius: this.#theme.teamLogoBorderRadius
+              }
+            );
+            logoShape.hoverGroupId = hoverGroupId;
+            if (url) {
+              logoShape.metadata = { url };
+              logoShape.cursor = "pointer";
+            }
+            boxes.push(logoShape);
+          }
+
+          // Compute text position — shift to make room for the logo
+          let textCenterX;
+          if (showLogo) {
+            if (this.#theme.teamLogoPosition === "right") {
+              // Logo on right: text shifts left
+              textCenterX = nameX + (effectiveNameWidth - logoSpace) / 2;
+            } else {
+              // Logo on left: text shifts right
+              textCenterX = nameX + logoSpace + (effectiveNameWidth - logoSpace) / 2;
+            }
+          } else {
+            textCenterX = nameX + effectiveNameWidth / 2;
+          }
+
           const nameText = new TextShape(
-            nameX + effectiveNameWidth / 2, y + teamYsize / 2, teamName,
+            textCenterX, y + teamYsize / 2, teamName,
             this.#theme.textColor, this.#theme.fontFamily, this.#theme.fontSize
           );
           nameText.hoverGroupId = hoverGroupId;
@@ -328,12 +373,23 @@ class BracketLayout {
 
       ctx.font = `${this.#theme.fontSize}px ${this.#theme.fontFamily}`;
 
+      // Extra width needed for logo if any team in this round has an image
+      const logoExtra = this.#theme.showTeamLogos
+        ? (this.#theme.teamLogoSize + this.#theme.teamLogoMargin * 2)
+        : 0;
+
       for (const match of roundData.matches) {
         for (const teamData of match.teams) {
           const teamName = typeof teamData === "string" ? teamData : teamData.name;
           const measuredWidth = ctx ? ctx.measureText(teamName).width : teamName.length * 8;
-          const requiredWidth = measuredWidth + this.#theme.paddingX;
+          let requiredWidth = measuredWidth + this.#theme.paddingX;
           
+          // Add logo space if this team has an image
+          const hasImage = teamData.image && ImageLoader.get(teamData.image);
+          if (hasImage) {
+            requiredWidth += logoExtra;
+          }
+
           // Add score width if present
           const finalWidth = teamData.score !== undefined ? requiredWidth + this.#theme.scoreBoxWidth : requiredWidth;
 
