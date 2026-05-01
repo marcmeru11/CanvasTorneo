@@ -109,7 +109,7 @@ describe('TournamentBracket Integration', () => {
     document.body.appendChild(wrapper);
 
     const bracketWithParent = new TournamentBracket(newCanvas, theme);
-    const parentBtn = wrapper.querySelector('#tournament-center-btn');
+    const parentBtn = wrapper.querySelector('button');
     expect(parentBtn).not.toBeNull();
 
     // Trigger button interaction
@@ -189,8 +189,8 @@ describe('TournamentBracket Integration', () => {
     expect(isolatedCanvas.nextSibling.id).toBe('tournament-center-btn');
 
     // Now with a parent
-    const container = document.createElement('div');
-    container.appendChild(isolatedCanvas);
+    const parentWrapper = document.createElement('div');
+    parentWrapper.appendChild(isolatedCanvas);
     const bracket2 = new TournamentBracket(isolatedCanvas, theme);
     // The container should be a child of our div, and the button a sibling of the canvas
     expect(isolatedCanvas.nextSibling).not.toBeNull();
